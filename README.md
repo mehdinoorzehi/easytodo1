@@ -1,16 +1,15 @@
-# easytodo1
+# easytodo
 
-A new Flutter project.
+## A TODO application that has unique features.
 
-## Getting Started
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; text-align: center;">
+    <img src="assets/1.png" alt="Image 1" style="width: 70%;">
+    <img src="assets/2.png" alt="Image 2" style="width: 70%;">
+    <img src="assets/3.png" alt="Image 3" style="width: 70%;">
+    <img src="assets/4.png" alt="Image 4" style="width: 70%;">
+    <img src="assets/5.png" alt="Image 5" style="width: 70%;">
 
-This project is a starting point for a Flutter application.
+</div>
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
