@@ -2,11 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import '../constant.dart';
 import '../controller/task_controllers.dart';
 import '../controller/textfield_controllers.dart';
-import '../pages/home_page.dart';
+
+import '../widgets/other_widgets/floating_action_button_widget.dart';
+import '../widgets/other_widgets/text_avatar_in_top_container_widget.dart';
 
 class musicPage extends StatelessWidget {
   const musicPage({super.key});
@@ -15,70 +16,28 @@ class musicPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: KOrangeColor,
-      appBar: MyAppBar(),
-      drawer: drawer(),
-      floatingActionButton: const MyFloatingActionButton(),
-      body: const SafeArea(
+      floatingActionButton: MyFloatingActionButton(
+        backGroundColor: KOrangeColor,
+        onTap: () {
+          Get.find<MusicTaskControllers>().isediting.value = false;
+          Get.find<TextFieldControllers>().title!.text = '';
+          Get.find<TextFieldControllers>().subtitle!.text = '';
+          Get.toNamed('/musicadd');
+        },
+      ),
+      body: SafeArea(
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            TextsAndAvatarInTopContainer(),
-            WhiteContainer(),
+            Obx(() => TextsAndAvatarInTopContainer(
+                imageAddress: 'assets/animations/music.json',
+                title: 'Music',
+                subTitle:
+                    ' ${Get.find<MusicTaskControllers>().task.length} Tasks')),
+            const WhiteContainer(),
           ],
         ),
       ),
-    );
-  }
-}
-
-class TextsAndAvatarInTopContainer extends StatelessWidget {
-  const TextsAndAvatarInTopContainer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(top: 40, left: 40),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            radius: 35,
-            child: SizedBox(
-              height: 50.0,
-              width: 50.0,
-              child: Lottie.asset(
-                'assets/animations/music.json',
-                // repeat: false,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(top: 30.0, left: 47.0),
-          child: const Text(
-            'Music',
-            style: TextStyle(
-                fontSize: 23.0,
-                color: Colors.white,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
-        Container(
-          alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(left: 47.0, top: 5.0),
-          child: Obx(() => Text(
-                ' ${Get.find<MusicTaskControllers>().task.length} Tasks',
-                style: const TextStyle(
-                  fontSize: 15.0,
-                  color: Colors.white,
-                ),
-              )),
-        ),
-      ],
     );
   }
 }
@@ -112,7 +71,7 @@ class WhiteContainer extends StatelessWidget {
                     );
                   },
                   controller: scrollController,
-                  itemCount: Get.find<MusicTaskControllers>().task.length,
+                  itemCount: musicController.task.length,
                   itemBuilder: (context, index) {
                     return Obx(() => ListTile(
                           contentPadding:
@@ -120,58 +79,41 @@ class WhiteContainer extends StatelessWidget {
                           onLongPress: () {
                             Get.defaultDialog(
                               title:
-                                  'Delete ${Get.find<MusicTaskControllers>().task[index].title}',
+                                  'Delete ${musicController.task[index].title}',
                               middleText: 'Are you sure ?',
                               onCancel: () {},
                               confirmTextColor: Colors.white,
                               cancelTextColor: KOrangeColor,
                               buttonColor: KOrangeColor,
                               onConfirm: () {
-                                Get.find<MusicTaskControllers>()
-                                    .task
-                                    .removeAt(index);
+                                musicController.task.removeAt(index);
                                 Get.back();
                               },
                             );
                           },
-                          title: Text(Get.find<MusicTaskControllers>()
-                              .task[index]
-                              .title!),
-                          subtitle: Text(Get.find<MusicTaskControllers>()
-                              .task[index]
-                              .subtitle!),
+                          title: Text(musicController.task[index].title!),
+                          subtitle: Text(musicController.task[index].subtitle!),
                           onTap: () {
-                            Get.find<MusicTaskControllers>().index = index;
-                            Get.find<MusicTaskControllers>().isediting.value =
-                                true;
-                            Get.find<TextFieldControllers>().title!.text =
-                                Get.find<MusicTaskControllers>()
-                                    .task[index]
-                                    .title!;
+                            musicController.index = index;
+                            musicController.isediting.value = true;
+                            textController.title!.text =
+                                musicController.task[index].title!;
                             //
                             //
-                            Get.find<TextFieldControllers>().subtitle!.text =
-                                Get.find<MusicTaskControllers>()
-                                    .task[index]
-                                    .subtitle!;
+                            textController.subtitle!.text =
+                                musicController.task[index].subtitle!;
 
                             Get.toNamed('/musicadd');
                           },
                           trailing: Checkbox(
                             activeColor: KOrangeColor,
                             onChanged: (value) {
-                              Get.find<MusicTaskControllers>()
-                                      .task[index]
-                                      .status =
-                                  !Get.find<MusicTaskControllers>()
-                                      .task[index]
-                                      .status!;
-                              Get.find<MusicTaskControllers>().task[index] =
-                                  Get.find<MusicTaskControllers>().task[index];
+                              musicController.task[index].status =
+                                  !musicController.task[index].status!;
+                              musicController.task[index] =
+                                  musicController.task[index];
                             },
-                            value: Get.find<MusicTaskControllers>()
-                                .task[index]
-                                .status,
+                            value: musicController.task[index].status,
                             shape: const RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(4.0))),
@@ -182,380 +124,4 @@ class WhiteContainer extends StatelessWidget {
               ));
         });
   }
-}
-
-class MyFloatingActionButton extends StatelessWidget {
-  const MyFloatingActionButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(15.0),
-      child: SizedBox(
-        width: 67.0,
-        height: 67.0,
-        child: FittedBox(
-          child: FloatingActionButton(
-            backgroundColor: KOrangeColor,
-            onPressed: () {
-              Get.find<MusicTaskControllers>().isediting.value = false;
-              Get.find<TextFieldControllers>().title!.text = '';
-              Get.find<TextFieldControllers>().subtitle!.text = '';
-              Get.toNamed('/musicadd');
-            },
-            child: const Icon(Icons.add),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-AppBar MyAppBar() {
-  return AppBar(
-    backgroundColor: KOrangeColor,
-    elevation: 0.0,
-    leading: Builder(
-      builder: (context) {
-        return IconButton(
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-          icon: const Icon(Icons.menu_open_rounded),
-          color: Colors.white,
-          iconSize: 40.0,
-        );
-      },
-    ),
-    actions: [
-      IconButton(
-        onPressed: () {
-          Get.back();
-        },
-        icon: const Icon(
-          Icons.arrow_forward_ios_rounded,
-          size: 27.0,
-        ),
-        splashColor: KOrangeColor,
-        splashRadius: 27.0,
-      )
-    ],
-  );
-}
-
-ClipPath drawer() {
-  return ClipPath(
-    clipper: OvalRightBorderClipper(),
-    clipBehavior: Clip.antiAliasWithSaveLayer,
-    child: Container(
-      padding: const EdgeInsets.only(left: 16.0, right: 40),
-      decoration: const BoxDecoration(
-        color: KOrangeColor,
-      ),
-      width: 300,
-      height: Get.height,
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: 90,
-                width: 90,
-                alignment: Alignment.center,
-                child: const CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 35,
-                  child: Center(
-                    child: Icon(
-                      Icons.headset_outlined,
-                      color: KOrangeColor,
-                      size: 35.0,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                margin: const EdgeInsets.only(top: 5.0, left: 86.0),
-                child: const Text(
-                  'MUSIC',
-                  style: TextStyle(
-                      fontSize: 23.0,
-                      color: KBlackColor,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(
-                height: 60.0,
-              ),
-              //
-              //
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.offAllNamed('/HomePage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.apps_rounded,
-                    size: 35.0,
-                    color: Colors.black,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Lists   ',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18.0)),
-                ]),
-              ),
-
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/AllTaskPage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.list_alt,
-                    size: 35.0,
-                    color: KLightBlueColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('All   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-
-              const Divider(),
-              //
-              //
-
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/workpage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.work_outline_rounded,
-                    size: 35.0,
-                    color: KYellowColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Work   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/musicpage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.headset_outlined,
-                    size: 35.0,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Music   ',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                  Icon(
-                    Icons.check_circle_outline,
-                    color: Colors.white,
-                  )
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/moviepage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.movie_creation_outlined,
-                    size: 35.0,
-                    color: KGreenColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Movie   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/studypage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.note_alt_outlined,
-                    size: 35.0,
-                    color: KPurpleColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Study   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/hometaskpage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.home_outlined,
-                    size: 35.0,
-                    color: KRedColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Home   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/shoppage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.shopping_bag_outlined,
-                    size: 35.0,
-                    color: KPhiroozeColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Shop   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/artpage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.color_lens_outlined,
-                    size: 35.0,
-                    color: KLightPurpleColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Art   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/travelpage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.travel_explore,
-                    size: 35.0,
-                    color: KTealColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Travel   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-              //
-              //
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed('/gympage');
-                },
-                child: const Row(children: [
-                  Icon(
-                    Icons.sports_gymnastics_outlined,
-                    size: 35.0,
-                    color: KPinkColor,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text('Gym   ',
-                      style: TextStyle(
-                          color: KBlackColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0)),
-                ]),
-              ),
-              const Divider(),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
 }

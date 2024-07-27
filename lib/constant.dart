@@ -1,6 +1,10 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'controller/task_controllers.dart';
+import 'controller/textfield_controllers.dart';
 
 const KBlackColor = Colors.black87;
 const KLightBlueColor = Color(0xff5886ff);
@@ -14,3 +18,16 @@ const KPhiroozeColor = Color(0xff41B3BF);
 const KPinkColor = Colors.redAccent;
 const KTealColor = Colors.teal;
 const KwhiteColor = Color(0xfff5f5f5);
+//
+//
+//
+final textController = Get.find<TextFieldControllers>();
+final artController = Get.find<ArtTaskControllers>();
+final gymController = Get.find<GymTaskControllers>();
+final homeController = Get.find<HomeTaskControllers>();
+final movieController = Get.find<MovieTaskControllers>();
+final musicController = Get.find<MusicTaskControllers>();
+final shopController = Get.find<ShopTaskControllers>();
+final studyController = Get.find<StudyTaskControllers>();
+final travelController = Get.find<TravelTaskControllers>();
+final workController = Get.find<WorkTaskControllers>();
